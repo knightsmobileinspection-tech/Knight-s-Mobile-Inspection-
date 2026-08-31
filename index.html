@@ -270,6 +270,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--font-body);min-hei
     </div>
   </div>
   <div class="header-right">
+    <button class="btn btn-danger" style="padding:6px 12px;font-size:.72rem;" onclick="clearReport()">🗑️ Clear Report</button>
     <div class="version-badge">Report Generator v2</div>
   </div>
 </header>
@@ -1433,6 +1434,46 @@ async function generatePDF() {
 function tick() { return new Promise(r=>setTimeout(r,30)); }
 
 // ═══════════════════════════════════════════════════════════════
+// CLEAR REPORT
+// ═══════════════════════════════════════════════════════════════
+function clearReport() {
+  if (!confirm('Clear all report data and start a new inspection? This cannot be undone.')) return;
+
+  // Reset all text/select/date inputs (leave file inputs alone, they have none stored anyway)
+  document.querySelectorAll('input, select, textarea').forEach(el => {
+    if (el.type !== 'file') el.value = '';
+  });
+
+  // Reset in-memory state
+  photos = [];
+  videos = [];
+  checks = {};
+  lastPdfBlob = null;
+  lastPdfFilename = '';
+  reportType = 'Pre-Purchase Inspection';
+
+  // Reset UI pieces that don't rebuild from scratch automatically
+  renderPhotoGrid();
+  renderVideoGrid();
+  clearSig('sigCanvas');
+  clearSig('custSigCanvas');
+  document.getElementById('sendOptions').style.display = 'none';
+  document.getElementById('previewPane').innerHTML = '';
+  document.getElementById('genProgress').classList.remove('show');
+
+  // Reset report type tabs back to the first option
+  document.querySelectorAll('.type-tab').forEach(b => b.classList.remove('active'));
+  document.querySelector('.type-tab').classList.add('active');
+
+  // Fresh date + report number, same as on first load
+  document.getElementById('inspDate').value = new Date().toISOString().split('T')[0];
+  document.getElementById('reportNum').value = 'KMI-' + Date.now().toString().slice(-6);
+
+  goTo(0);
+  showToast('🗑️ Report cleared — ready for a new inspection');
+}
+
+// ═══════════════════════════════════════════════════════════════
 // SEND TO CUSTOMER
 // ═══════════════════════════════════════════════════════════════
 async function shareReport() {
@@ -1452,9 +1493,7 @@ async function shareReport() {
   }
 
   const fullShareData = {
-    files: [pdfFile, ...videoFiles],
-    title: 'Vehicle Inspection Report',
-    text: `Inspection report for ${g('vYear')} ${g('vMake')} ${g('vModel')} — ${reportType}`
+    files: [pdfFile, ...videoFiles]
   };
 
   if (navigator.canShare && navigator.canShare(fullShareData)) {
@@ -1471,7 +1510,7 @@ async function shareReport() {
   // Fallback: some browsers reject multi-file or large-video shares — try PDF alone
   if (videoFiles.length && navigator.canShare && navigator.canShare({files:[pdfFile]})) {
     try {
-      await navigator.share({files:[pdfFile], title:fullShareData.title, text:fullShareData.text});
+      await navigator.share({files:[pdfFile]});
       showToast('✅ Shared PDF only — videos too large to include, send those separately.');
       return;
     } catch (e) {
