@@ -270,12 +270,21 @@ body{background:var(--bg);color:var(--text);font-family:var(--font-body);min-hei
     </div>
   </div>
   <div class="header-right">
+    <button class="btn btn-outline" style="padding:6px 12px;font-size:.72rem;" onclick="saveReportDraft()">💾 Save Report</button>
     <button class="btn btn-danger" style="padding:6px 12px;font-size:.72rem;" onclick="clearReport()">🗑️ Clear Report</button>
     <div class="version-badge">Report Generator v2</div>
   </div>
 </header>
 
 <div class="container">
+
+  <div id="restoreBanner" style="display:none;background:#4a9eff18;border:1px solid #4a9eff40;border-radius:10px;padding:12px 16px;margin-bottom:1.25rem;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;">
+    <span style="font-size:.85rem;color:var(--text);" id="restoreBannerText">A saved report was found.</span>
+    <div style="display:flex;gap:8px;">
+      <button class="btn btn-primary" style="padding:6px 14px;font-size:.75rem;" onclick="restoreReportDraft()">Restore</button>
+      <button class="btn btn-outline" style="padding:6px 14px;font-size:.75rem;" onclick="dismissRestoreBanner()">Dismiss</button>
+    </div>
+  </div>
 
   <!-- Steps Nav -->
   <nav class="steps-nav">
@@ -649,7 +658,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--font-body);min-hei
         <div class="upload-zone" id="photoDropZone" onclick="document.getElementById('photoInput').click()">
           <div class="upload-icon">📷</div>
           <p class="upload-text"><strong>Click to upload</strong> or drag &amp; drop</p>
-          <p class="upload-text" style="margin-top:5px;font-size:.75rem">JPG, PNG, WEBP — up to 30 photos</p>
+          <p class="upload-text" style="margin-top:5px;font-size:.75rem">JPG, PNG, WEBP — up to 30 photos (auto-resized to save space)</p>
         </div>
         <input type="file" id="photoInput" accept="image/*" multiple style="display:none" onchange="handlePhotos(this.files)"/>
         <div class="media-grid" id="photoGrid"></div>
@@ -660,7 +669,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--font-body);min-hei
         <div class="upload-zone" id="videoDropZone" onclick="document.getElementById('videoInput').click()">
           <div class="upload-icon">🎥</div>
           <p class="upload-text"><strong>Click to upload</strong> video clips</p>
-          <p class="upload-text" style="margin-top:5px;font-size:.75rem">MP4, MOV, AVI — up to 5 clips</p>
+          <p class="upload-text" style="margin-top:5px;font-size:.75rem">MP4, MOV, AVI — up to 5 clips, under 80MB each</p>
         </div>
         <input type="file" id="videoInput" accept="video/*" multiple style="display:none" onchange="handleVideos(this.files)"/>
         <div class="media-grid" id="videoGrid"></div>
@@ -845,9 +854,43 @@ function setMediaTab(btn, type) {
 // PHOTOS
 // ═══════════════════════════════════════════════════════════════
 function handlePhotos(files) {
-  Array.from(files).slice(0, 30 - photos.length).forEach(file => {
+  const remaining = 30 - photos.length;
+  if (remaining <= 0) { showToast('⚠️ Photo limit reached (30 max)'); return; }
+  Array.from(files).slice(0, remaining).forEach(file => {
+    resizePhotoFile(file, 1400, 0.72)
+      .then(dataUrl => { photos.push({name:file.name, dataUrl}); renderPhotoGrid(); })
+      .catch(err => {
+        console.error('Photo processing failed:', file.name, err);
+        showToast('⚠️ Could not process ' + file.name + ' — skipped');
+      });
+  });
+}
+
+// Shrinks a photo to a reasonable max dimension and re-encodes as JPEG before
+// it's held in memory or embedded in the PDF. Full-resolution phone photos
+// (often 3-10MB each) are what previously overloaded the browser when many
+// were attached at once — this cuts each photo down to roughly 100-400KB.
+function resizePhotoFile(file, maxDim, quality) {
+  return new Promise((resolve, reject) => {
     const reader = new FileReader();
-    reader.onload = e => { photos.push({name:file.name, dataUrl:e.target.result}); renderPhotoGrid(); };
+    reader.onload = e => {
+      const img = new Image();
+      img.onload = () => {
+        let w = img.width, h = img.height;
+        if (w > maxDim || h > maxDim) {
+          if (w > h) { h = Math.round(h * maxDim / w); w = maxDim; }
+          else { w = Math.round(w * maxDim / h); h = maxDim; }
+        }
+        const canvas = document.createElement('canvas');
+        canvas.width = w; canvas.height = h;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, w, h);
+        resolve(canvas.toDataURL('image/jpeg', quality));
+      };
+      img.onerror = () => reject(new Error('Image failed to load'));
+      img.src = e.target.result;
+    };
+    reader.onerror = () => reject(new Error('File read failed'));
     reader.readAsDataURL(file);
   });
 }
@@ -870,10 +913,18 @@ pdz.addEventListener('drop', e=>{e.preventDefault();pdz.classList.remove('drag-o
 // VIDEOS
 // ═══════════════════════════════════════════════════════════════
 function handleVideos(files) {
-  Array.from(files).slice(0, 5 - videos.length).forEach(file => {
+  const remaining = 5 - videos.length;
+  if (remaining <= 0) { showToast('⚠️ Video limit reached (5 max)'); return; }
+  const MAX_VIDEO_BYTES = 80 * 1024 * 1024; // 80MB — beyond this, encoding to base64 risks crashing the tab
+  Array.from(files).slice(0, remaining).forEach(file => {
+    if (file.size > MAX_VIDEO_BYTES) {
+      showToast('⚠️ ' + file.name + ' is too large (' + Math.round(file.size/1024/1024) + 'MB) — keep clips under 80MB');
+      return;
+    }
     const objUrl = URL.createObjectURL(file);
     const reader = new FileReader();
     reader.onload = e => { videos.push({name:file.name, dataUrl:e.target.result, objectUrl:objUrl}); renderVideoGrid(); };
+    reader.onerror = () => showToast('⚠️ Could not process ' + file.name);
     reader.readAsDataURL(file);
   });
 }
@@ -916,7 +967,87 @@ window.addEventListener('load', () => {
   setupCanvas('custSigCanvas');
   document.getElementById('inspDate').value = new Date().toISOString().split('T')[0];
   document.getElementById('reportNum').value = 'KMI-' + Date.now().toString().slice(-6);
+
+  // Clean up any leftover service worker from an older version of this site —
+  // a stuck/stale one can cause repeated page crashes.
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.getRegistrations().then(regs => {
+      regs.forEach(reg => reg.unregister());
+    }).catch(() => {});
+  }
+
+  checkForSavedDraft();
 });
+
+// ═══════════════════════════════════════════════════════════════
+// SAVE / RESTORE REPORT DRAFT (protects against a crashed/closed tab)
+// ═══════════════════════════════════════════════════════════════
+const DRAFT_KEY = 'kmi_report_draft_v1';
+
+function saveReportDraft() {
+  try {
+    const fields = {};
+    document.querySelectorAll('input, select, textarea').forEach(el => {
+      if (el.id && el.type !== 'file') fields[el.id] = el.value;
+    });
+    const draft = {
+      fields,
+      checks,
+      reportType,
+      savedAt: new Date().toISOString(),
+      savedAtLabel: new Date().toLocaleString('en-US', {timeZone:'America/Detroit'})
+    };
+    localStorage.setItem(DRAFT_KEY, JSON.stringify(draft));
+    showToast('💾 Report saved on this device');
+  } catch (e) {
+    console.error('Save failed:', e);
+    showToast('⚠️ Could not save — device storage may be full');
+  }
+}
+
+function checkForSavedDraft() {
+  try {
+    const raw = localStorage.getItem(DRAFT_KEY);
+    if (!raw) return;
+    const draft = JSON.parse(raw);
+    document.getElementById('restoreBannerText').textContent =
+      `A saved report was found from ${draft.savedAtLabel || 'earlier'}.`;
+    document.getElementById('restoreBanner').style.display = 'flex';
+  } catch (e) {
+    console.warn('Could not check for saved draft:', e);
+  }
+}
+
+function restoreReportDraft() {
+  try {
+    const raw = localStorage.getItem(DRAFT_KEY);
+    if (!raw) return;
+    const draft = JSON.parse(raw);
+
+    Object.entries(draft.fields || {}).forEach(([id, val]) => {
+      const el = document.getElementById(id);
+      if (el) el.value = val;
+    });
+
+    checks = draft.checks || {};
+    reportType = draft.reportType || 'Pre-Purchase Inspection';
+
+    // Sync the report type tab UI to match the restored type
+    document.querySelectorAll('.type-tab').forEach(b => {
+      b.classList.toggle('active', b.textContent.includes(reportType.split(' ')[0]));
+    });
+
+    dismissRestoreBanner();
+    showToast('✅ Report restored');
+  } catch (e) {
+    console.error('Restore failed:', e);
+    showToast('⚠️ Could not restore saved report');
+  }
+}
+
+function dismissRestoreBanner() {
+  document.getElementById('restoreBanner').style.display = 'none';
+}
 
 // ═══════════════════════════════════════════════════════════════
 // PREVIEW
@@ -1460,6 +1591,8 @@ function clearReport() {
   document.getElementById('sendOptions').style.display = 'none';
   document.getElementById('previewPane').innerHTML = '';
   document.getElementById('genProgress').classList.remove('show');
+  try { localStorage.removeItem(DRAFT_KEY); } catch(e) {}
+  dismissRestoreBanner();
 
   // Reset report type tabs back to the first option
   document.querySelectorAll('.type-tab').forEach(b => b.classList.remove('active'));
