@@ -371,7 +371,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--font-body);min-hei
 
     <div class="nav-row">
       <div></div>
-      <button class="btn btn-primary" onclick="goTo(1)">Next: Warranty Info →</button>
+      <button class="btn btn-primary" id="vehicleNextBtn" onclick="nextFromVehicle()">Next: Mechanical →</button>
     </div>
   </div>
 
@@ -465,30 +465,30 @@ body{background:var(--bg);color:var(--text);font-family:var(--font-body);min-hei
       <div class="g3">
         <div class="field"><label>Engine Size / Config</label><input id="engSize" placeholder="3.5L V6 EcoBoost"/></div>
         <div class="field"><label>Engine Condition</label>
-          <select id="engCondition"><option value="">Select...</option><option>Excellent</option><option>Good</option><option>Fair</option><option>Poor</option><option>Inoperable</option></select>
+          <select id="engCondition"><option value="">Select...</option><option>N/A</option><option>Excellent</option><option>Good</option><option>Fair</option><option>Poor</option><option>Inoperable</option></select>
         </div>
         <div class="field"><label>Cold Start Idle</label>
-          <select id="engIdle"><option value="">Select...</option><option>Smooth</option><option>Rough</option><option>Misfire</option><option>No Start</option></select>
+          <select id="engIdle"><option value="">Select...</option><option>N/A</option><option>Smooth</option><option>Rough</option><option>Misfire</option><option>No Start</option></select>
         </div>
         <div class="field"><label>Oil Level</label>
-          <select id="oilLevel"><option value="">Select...</option><option>Full</option><option>Low – 1 qt</option><option>Low – 2 qt+</option><option>Empty</option></select>
+          <select id="oilLevel"><option value="">Select...</option><option>N/A</option><option>Full</option><option>Low – 1 qt</option><option>Low – 2 qt+</option><option>Empty</option></select>
         </div>
         <div class="field"><label>Oil Color / Condition</label>
-          <select id="oilColor"><option value="">Select...</option><option>Clean / Amber</option><option>Dark / Dirty</option><option>Milky (coolant mix)</option><option>Metallic particles</option></select>
+          <select id="oilColor"><option value="">Select...</option><option>N/A</option><option>Clean / Amber</option><option>Dark / Dirty</option><option>Milky (coolant mix)</option><option>Metallic particles</option></select>
         </div>
         <div class="field"><label>Oil Pressure (if gauge)</label><input id="oilPressure" placeholder="45 psi"/></div>
         <div class="field"><label>Coolant Level</label>
-          <select id="coolantLevel"><option value="">Select...</option><option>Full</option><option>Low</option><option>Empty</option></select>
+          <select id="coolantLevel"><option value="">Select...</option><option>N/A</option><option>Full</option><option>Low</option><option>Empty</option></select>
         </div>
         <div class="field"><label>Coolant Condition</label>
-          <select id="coolantColor"><option value="">Select...</option><option>Clean</option><option>Rusty / Contaminated</option><option>Milky (oil mix)</option></select>
+          <select id="coolantColor"><option value="">Select...</option><option>N/A</option><option>Clean</option><option>Rusty / Contaminated</option><option>Milky (oil mix)</option></select>
         </div>
         <div class="field"><label>Engine Temp at Inspection</label><input id="engTemp" placeholder="195°F – Normal"/></div>
         <div class="field"><label>Check Engine Light?</label>
-          <select id="cel"><option value="">Select...</option><option>No – Off</option><option>Yes – On</option><option>Yes – Flashing</option></select>
+          <select id="cel"><option value="">Select...</option><option>N/A</option><option>No – Off</option><option>Yes – On</option><option>Yes – Flashing</option></select>
         </div>
         <div class="field"><label>OBD-II Scan Done?</label>
-          <select id="obdScan"><option value="">Select...</option><option>Yes – No codes</option><option>Yes – Codes found</option><option>No</option></select>
+          <select id="obdScan"><option value="">Select...</option><option>N/A</option><option>Yes – No codes</option><option>Yes – Codes found</option><option>No</option></select>
         </div>
         <div class="field"><label>DTC / Fault Codes</label><input id="dtcCodes" placeholder="P0300, P0171..."/></div>
         <div class="field span3"><label>Engine Notes</label><textarea id="engNotes" placeholder="Additional engine observations..."></textarea></div>
@@ -499,16 +499,16 @@ body{background:var(--bg);color:var(--text);font-family:var(--font-body);min-hei
       <div class="card-title">Transmission &amp; Drivetrain</div>
       <div class="g3">
         <div class="field"><label>Trans. Fluid Level</label>
-          <select id="transFluid"><option value="">Select...</option><option>Full</option><option>Low</option><option>Empty / Dry</option></select>
+          <select id="transFluid"><option value="">Select...</option><option>N/A</option><option>Full</option><option>Low</option><option>Empty / Dry</option></select>
         </div>
         <div class="field"><label>Trans. Fluid Condition</label>
-          <select id="transCond"><option value="">Select...</option><option>Clean / Pink-Red</option><option>Dark / Burnt</option><option>Metallic</option></select>
+          <select id="transCond"><option value="">Select...</option><option>N/A</option><option>Clean / Pink-Red</option><option>Dark / Burnt</option><option>Metallic</option></select>
         </div>
         <div class="field"><label>Shift Quality</label>
-          <select id="shiftQuality"><option value="">Select...</option><option>Smooth</option><option>Slight delay</option><option>Hard shifts</option><option>Slipping</option><option>No engagement</option></select>
+          <select id="shiftQuality"><option value="">Select...</option><option>N/A</option><option>Smooth</option><option>Slight delay</option><option>Hard shifts</option><option>Slipping</option><option>No engagement</option></select>
         </div>
         <div class="field"><label>CV Axles / Drive Shafts</label>
-          <select id="cvAxles"><option value="">Select...</option><option>Good</option><option>Minor wear</option><option>Torn boot</option><option>Failed</option></select>
+          <select id="cvAxles"><option value="">Select...</option><option>N/A</option><option>Good</option><option>Minor wear</option><option>Torn boot</option><option>Failed</option></select>
         </div>
         <div class="field"><label>Differential Condition</label>
           <select id="diffCond"><option value="">Select...</option><option>Good</option><option>Leaking</option><option>Noisy</option><option>N/A</option></select>
@@ -526,34 +526,34 @@ body{background:var(--bg);color:var(--text);font-family:var(--font-body);min-hei
         <div class="field"><label>Front Brake Pad %</label><input id="brkFrontPad" placeholder="60%"/></div>
         <div class="field"><label>Rear Brake Pad %</label><input id="brkRearPad" placeholder="40%"/></div>
         <div class="field"><label>Front Rotor Condition</label>
-          <select id="brkFrontRotor"><option value="">Select...</option><option>Good</option><option>Light scoring</option><option>Heavy scoring</option><option>Cracked</option></select>
+          <select id="brkFrontRotor"><option value="">Select...</option><option>N/A</option><option>Good</option><option>Light scoring</option><option>Heavy scoring</option><option>Cracked</option></select>
         </div>
         <div class="field"><label>Rear Rotor Condition</label>
-          <select id="brkRearRotor"><option value="">Select...</option><option>Good</option><option>Light scoring</option><option>Heavy scoring</option><option>Cracked</option><option>Drum – Good</option><option>Drum – Worn</option></select>
+          <select id="brkRearRotor"><option value="">Select...</option><option>N/A</option><option>Good</option><option>Light scoring</option><option>Heavy scoring</option><option>Cracked</option><option>Drum – Good</option><option>Drum – Worn</option></select>
         </div>
         <div class="field"><label>Brake Fluid Level</label>
-          <select id="brkFluid"><option value="">Select...</option><option>Full</option><option>Low</option><option>Empty</option></select>
+          <select id="brkFluid"><option value="">Select...</option><option>N/A</option><option>Full</option><option>Low</option><option>Empty</option></select>
         </div>
         <div class="field"><label>Brake Fluid Condition</label>
-          <select id="brkFluidCond"><option value="">Select...</option><option>Clear</option><option>Dark / Contaminated</option></select>
+          <select id="brkFluidCond"><option value="">Select...</option><option>N/A</option><option>Clear</option><option>Dark / Contaminated</option></select>
         </div>
         <div class="field"><label>Emergency / Parking Brake</label>
-          <select id="eBrake"><option value="">Select...</option><option>Functional</option><option>Weak</option><option>Not Functional</option></select>
+          <select id="eBrake"><option value="">Select...</option><option>N/A</option><option>Functional</option><option>Weak</option><option>Not Functional</option></select>
         </div>
         <div class="field"><label>ABS Light On?</label>
-          <select id="absLight"><option value="">Select...</option><option>No</option><option>Yes</option></select>
+          <select id="absLight"><option value="">Select...</option><option>N/A</option><option>No</option><option>Yes</option></select>
         </div>
         <div class="field"><label>Front Shocks / Struts</label>
-          <select id="shocksFront"><option value="">Select...</option><option>Good</option><option>Worn</option><option>Leaking</option><option>Failed</option></select>
+          <select id="shocksFront"><option value="">Select...</option><option>N/A</option><option>Good</option><option>Worn</option><option>Leaking</option><option>Failed</option></select>
         </div>
         <div class="field"><label>Rear Shocks / Struts</label>
-          <select id="shocksRear"><option value="">Select...</option><option>Good</option><option>Worn</option><option>Leaking</option><option>Failed</option></select>
+          <select id="shocksRear"><option value="">Select...</option><option>N/A</option><option>Good</option><option>Worn</option><option>Leaking</option><option>Failed</option></select>
         </div>
         <div class="field"><label>Ball Joints</label>
-          <select id="ballJoints"><option value="">Select...</option><option>Good</option><option>Minor play</option><option>Excessive play</option></select>
+          <select id="ballJoints"><option value="">Select...</option><option>N/A</option><option>Good</option><option>Minor play</option><option>Excessive play</option></select>
         </div>
         <div class="field"><label>Tie Rods</label>
-          <select id="tieRods"><option value="">Select...</option><option>Good</option><option>Minor play</option><option>Excessive play</option></select>
+          <select id="tieRods"><option value="">Select...</option><option>N/A</option><option>Good</option><option>Minor play</option><option>Excessive play</option></select>
         </div>
         <div class="field span2"><label>Suspension Notes</label><textarea id="suspNotes" placeholder="Describe suspension findings..."></textarea></div>
       </div>
@@ -566,19 +566,19 @@ body{background:var(--bg);color:var(--text);font-family:var(--font-body);min-hei
           <select id="psFluid"><option value="">Select...</option><option>Full – Good</option><option>Low</option><option>Leaking</option><option>Electric – N/A</option></select>
         </div>
         <div class="field"><label>A/C Refrigerant</label>
-          <select id="acRefrig"><option value="">Select...</option><option>Charged – Cold</option><option>Low</option><option>Not Functional</option></select>
+          <select id="acRefrig"><option value="">Select...</option><option>N/A</option><option>Charged – Cold</option><option>Low</option><option>Not Functional</option></select>
         </div>
         <div class="field"><label>Timing Belt / Chain</label>
-          <select id="timingBelt"><option value="">Select...</option><option>Chain – Good</option><option>Belt – Good</option><option>Belt – Needs Replacement</option><option>Unknown</option></select>
+          <select id="timingBelt"><option value="">Select...</option><option>N/A</option><option>Chain – Good</option><option>Belt – Good</option><option>Belt – Needs Replacement</option><option>Unknown</option></select>
         </div>
         <div class="field"><label>Serpentine / Drive Belt</label>
-          <select id="serpBelt"><option value="">Select...</option><option>Good</option><option>Cracked</option><option>Frayed</option><option>Missing</option></select>
+          <select id="serpBelt"><option value="">Select...</option><option>N/A</option><option>Good</option><option>Cracked</option><option>Frayed</option><option>Missing</option></select>
         </div>
         <div class="field"><label>Coolant Hoses</label>
-          <select id="coolantHoses"><option value="">Select...</option><option>Good</option><option>Soft / Spongy</option><option>Cracked</option><option>Leaking</option></select>
+          <select id="coolantHoses"><option value="">Select...</option><option>N/A</option><option>Good</option><option>Soft / Spongy</option><option>Cracked</option><option>Leaking</option></select>
         </div>
         <div class="field"><label>Vacuum Lines</label>
-          <select id="vacLines"><option value="">Select...</option><option>Good</option><option>Cracked</option><option>Disconnected</option></select>
+          <select id="vacLines"><option value="">Select...</option><option>N/A</option><option>Good</option><option>Cracked</option><option>Disconnected</option></select>
         </div>
       </div>
     </div>
@@ -587,15 +587,15 @@ body{background:var(--bg);color:var(--text);font-family:var(--font-body);min-hei
       <div class="card-title">Electrical &amp; Battery</div>
       <div class="g3">
         <div class="field"><label>Battery Condition</label>
-          <select id="batCond"><option value="">Select...</option><option>Good</option><option>Weak – Test</option><option>Failed</option><option>Corroded terminals</option></select>
+          <select id="batCond"><option value="">Select...</option><option>N/A</option><option>Good</option><option>Weak – Test</option><option>Failed</option><option>Corroded terminals</option></select>
         </div>
         <div class="field"><label>Battery Voltage</label><input id="batVoltage" placeholder="12.6V"/></div>
         <div class="field"><label>Charging Voltage (running)</label><input id="chargeVoltage" placeholder="14.2V"/></div>
         <div class="field"><label>Alternator</label>
-          <select id="alternator"><option value="">Select...</option><option>Good</option><option>Weak</option><option>Failed</option></select>
+          <select id="alternator"><option value="">Select...</option><option>N/A</option><option>Good</option><option>Weak</option><option>Failed</option></select>
         </div>
         <div class="field"><label>Starter</label>
-          <select id="starter"><option value="">Select...</option><option>Good</option><option>Slow crank</option><option>Failed</option></select>
+          <select id="starter"><option value="">Select...</option><option>N/A</option><option>Good</option><option>Slow crank</option><option>Failed</option></select>
         </div>
         <div class="field"><label>Warning Lights (other)</label><input id="warningLights" placeholder="TPMS, Traction Ctrl..."/></div>
       </div>
@@ -610,10 +610,10 @@ body{background:var(--bg);color:var(--text);font-family:var(--font-body);min-hei
         <div class="field"><label>RR Tread Depth (32nds)</label><input id="tireRR" placeholder="7/32"/></div>
         <div class="field"><label>Tire Brand / Size</label><input id="tireBrand" placeholder="Michelin 265/70R17"/></div>
         <div class="field"><label>Tire Condition</label>
-          <select id="tireCond"><option value="">Select...</option><option>Good – Even wear</option><option>Inner edge wear</option><option>Outer edge wear</option><option>Center wear</option><option>Cupping</option><option>Needs replacement</option></select>
+          <select id="tireCond"><option value="">Select...</option><option>N/A</option><option>Good – Even wear</option><option>Inner edge wear</option><option>Outer edge wear</option><option>Center wear</option><option>Cupping</option><option>Needs replacement</option></select>
         </div>
         <div class="field"><label>Wheel Condition</label>
-          <select id="wheelCond"><option value="">Select...</option><option>Good</option><option>Minor curb rash</option><option>Bent / Cracked</option></select>
+          <select id="wheelCond"><option value="">Select...</option><option>N/A</option><option>Good</option><option>Minor curb rash</option><option>Bent / Cracked</option></select>
         </div>
         <div class="field"><label>Spare Tire</label>
           <select id="spareTire"><option value="">Select...</option><option>Full size – Good</option><option>Compact – Good</option><option>Flat / Missing</option><option>N/A</option></select>
@@ -622,7 +622,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--font-body);min-hei
     </div>
 
     <div class="nav-row">
-      <button class="btn btn-outline" onclick="goTo(1)">← Back</button>
+      <button class="btn btn-outline" onclick="backFromMechanical()">← Back</button>
       <button class="btn btn-primary" onclick="goTo(3)">Next: Checklist →</button>
     </div>
   </div>
@@ -823,6 +823,25 @@ function setType(btn, type) {
   document.querySelectorAll('.type-tab').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
   reportType = type;
+  updateWarrantyStepVisibility();
+}
+
+// The Warranty Info step only matters for Aftermarket Warranty Inspections —
+// hide it from the step nav and skip over it in Next/Back navigation otherwise.
+function updateWarrantyStepVisibility() {
+  const isWarranty = reportType === 'Aftermarket Warranty Inspection';
+  const btn = document.getElementById('stepBtn1');
+  if (btn) btn.style.display = isWarranty ? '' : 'none';
+  const nextBtn = document.getElementById('vehicleNextBtn');
+  if (nextBtn) nextBtn.textContent = isWarranty ? 'Next: Warranty Info →' : 'Next: Mechanical →';
+}
+
+function nextFromVehicle() {
+  goTo(reportType === 'Aftermarket Warranty Inspection' ? 1 : 2);
+}
+
+function backFromMechanical() {
+  goTo(reportType === 'Aftermarket Warranty Inspection' ? 1 : 0);
 }
 
 // ═══════════════════════════════════════════════════════════════
@@ -977,6 +996,7 @@ window.addEventListener('load', () => {
   }
 
   checkForSavedDraft();
+  updateWarrantyStepVisibility();
 });
 
 // ═══════════════════════════════════════════════════════════════
@@ -1163,7 +1183,7 @@ async function generatePDF() {
         const xi=M+col*(colW+10), yi=y+row*22;
         doc.setFontSize(7.5); doc.setFont('helvetica','normal'); doc.setTextColor(...C.muted);
         doc.text(k.toUpperCase(), xi, yi+10);
-        doc.setFontSize(9.5); doc.setFont('helvetica','bold'); doc.setTextColor(...C.text);
+        doc.setFontSize(9.5); doc.setFont('helvetica','bold'); doc.setTextColor(...C.bg);
         doc.text(v||'—', xi+90, yi+10);
       });
       y += rowCount*22+10;
