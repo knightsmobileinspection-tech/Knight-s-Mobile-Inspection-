@@ -658,7 +658,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--font-body);min-hei
         <div class="upload-zone" id="photoDropZone" onclick="document.getElementById('photoInput').click()">
           <div class="upload-icon">📷</div>
           <p class="upload-text"><strong>Click to upload</strong> or drag &amp; drop</p>
-          <p class="upload-text" style="margin-top:5px;font-size:.75rem">JPG, PNG, WEBP — up to 30 photos (auto-resized to save space)</p>
+          <p class="upload-text" style="margin-top:5px;font-size:.75rem">JPG, PNG, WEBP — up to 80 photos (auto-resized to save space)</p>
         </div>
         <input type="file" id="photoInput" accept="image/*" multiple style="display:none" onchange="handlePhotos(this.files)"/>
         <div class="media-grid" id="photoGrid"></div>
@@ -873,8 +873,8 @@ function setMediaTab(btn, type) {
 // PHOTOS
 // ═══════════════════════════════════════════════════════════════
 function handlePhotos(files) {
-  const remaining = 30 - photos.length;
-  if (remaining <= 0) { showToast('⚠️ Photo limit reached (30 max)'); return; }
+  const remaining = 80 - photos.length;
+  if (remaining <= 0) { showToast('⚠️ Photo limit reached (80 max)'); return; }
   Array.from(files).slice(0, remaining).forEach(file => {
     resizePhotoFile(file, 1400, 0.72)
       .then(dataUrl => { photos.push({name:file.name, dataUrl}); renderPhotoGrid(); })
